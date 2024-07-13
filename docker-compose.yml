@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: giphy-app
+    restart: unless-stopped
+    working_dir: /var/www/html/giphy-integration
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - "9000:9000"
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+
+  mysql:
+    image: 'mysql/mysql-server:8.0'
+    container_name: giphy-db
+    volumes:
+      - '${DB_DOCKER_PATH:-.}/.mysql:/var/lib/mysql'
+      - './create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
+      - '.:/var/www/html'
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    ports:
+      - '127.0.0.1:${FORWARD_DB_PORT:-3306}:3306'
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}" ]
+      retries: 3
+      timeout: 5s
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - app
+      - mysql
+    networks:
+      - app-network
+
+#volumes:
+#  db-data:
+
+networks:
+  app-network:
+    driver: bridge

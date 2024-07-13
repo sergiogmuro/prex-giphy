@@ -1,0 +1,238 @@
+{
+	"info": {
+		"_postman_id": "c769b41f-5306-4787-9a76-2cba584e818e",
+		"name": "PREX GIPHY",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2038371",
+		"_collection_link": "https://contextusdev.postman.co/workspace/Personal-WorkSpace~142dff14-e6de-4c1d-8ab4-89d4e57679ee/collection/2038371-c769b41f-5306-4787-9a76-2cba584e818e?action=share&source=collection_link&creator=2038371"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var res = pm.response.json();",
+							"",
+							"pm.collectionVariables.set(\"OAUTH_TOKEN\", res.token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "sergiomuro@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost/api/login",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search GIF",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"query\": \"homer\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost/api/gif/search",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"gif",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get by ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost/api/gif/a93jwI0wkWTQs",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"gif",
+						"a93jwI0wkWTQs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Save Favorite",
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": 11,\n    \"gif_id\": \"a93jwI0wkWTQs\",\n    \"alias\": \"Homero Simpson\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost/api/gif/favorite/store",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"gif",
+						"favorite",
+						"store"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"let path = pm.request.url.path.join('/')",
+					"",
+					"if (path !== 'api/login') {",
+					"    let token = pm.collectionVariables.get(\"OAUTH_TOKEN\");",
+					"",
+					"    if (!token) {",
+					"        throw new Error('USER NOT LOGGED')",
+					"    }",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "OAUTH_TOKEN",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
